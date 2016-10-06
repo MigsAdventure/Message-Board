@@ -20,12 +20,16 @@ const server = http.createServer((req, res) => {
   let urlChunks = url.split('/')
 
   let [, path, msgId] = urlChunks;
+  // console.log('path: ', path);
+  // console.log('msgId: ', msgId);
+  // console.log(`${path}/${msgId}`)
 
   switch(method) {
     case 'GET' : {
-      switch(path) {
+      switch(`${path}/${msgId}`) {
 
-        case 'messages' : {
+
+        case 'messages/undefined' : {
               fs.readFile(fileName, (err,buffer) => {
                 let messages = JSON.parse(buffer);
                  res.end(JSON.stringify(messages));
@@ -33,8 +37,22 @@ const server = http.createServer((req, res) => {
             }break;
 
         case `messages/${msgId}`: {
-              console.log('works')
-              res.end('get id')
+
+              fs.readFile(fileName, (err, buffer) => {
+                let messages = JSON.parse(buffer);
+                let searchedMessage = messages.map( message => {
+                  console.log('message.id: ', message.id)
+                  console.log('msgId: ', msgId)
+                  if (message.id === msgId) {
+                    return message;
+                  } else {
+                    console.log('didnt work')
+                  }
+                })
+
+                res.end(JSON.stringify(searchedMessage))
+              })
+             
         }break;
 
       } //end of switch path for GET
@@ -73,6 +91,11 @@ const server = http.createServer((req, res) => {
      
     
     case 'DELETE' : {
+          fs.readFile(fileName,(err,buffer) => {
+            let messages = JSON.parse(buffer);
+
+            res.end('')
+          })
       
     }break; //end of case DELETE
 
