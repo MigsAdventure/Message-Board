@@ -86,7 +86,31 @@ const server = http.createServer((req, res) => {
      
 
     case 'PUT' : {
+      switch(`${path}/${msgId}`) {
 
+        case `messages/${msgId}` : {
+              anyBody (req, (err,body) => {
+                fs.readFile(fileName,(err,buffer) => {
+                    let messages = JSON.parse(buffer);
+                    let updatedMessages = messages.map((message, i) => {
+                      if (msgId === message.id) {
+                        message = body;
+                        message.id = msgId;
+                        message.time = moment().format('lll');
+                      }
+                      return message
+                    })//end of map
+
+                    fs.writeFile(fileName, JSON.stringify(updatedMessages), err => {
+                      res.end('updating');
+                    })
+                  })//end of readfile
+
+              });
+                  
+
+        }break;
+      } //end of switch
     }break;//end of case PUT
      
     
@@ -109,7 +133,7 @@ const server = http.createServer((req, res) => {
                  })
                 
               })
-            }
+            }break;
         }
 
     }break; //end of case DELETE
