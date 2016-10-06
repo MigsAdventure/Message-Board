@@ -91,12 +91,27 @@ const server = http.createServer((req, res) => {
      
     
     case 'DELETE' : {
-          fs.readFile(fileName,(err,buffer) => {
-            let messages = JSON.parse(buffer);
+      switch(`${path}/${msgId}`) {
 
-            res.end('')
-          })
-      
+        case `messages/${msgId}` : {
+              fs.readFile(fileName,(err,buffer) => {
+                let messages = JSON.parse(buffer);
+                 let newMessages = messages.filter(message => {
+                  if (msgId !== message.id ) {
+                    return message;
+                  } else {
+                    console.log('didnt work')
+                  }
+                }) //end of map
+
+                 fs.writeFile(fileName, JSON.stringify(newMessages), err => {
+                  res.end(`Current Messages: \n ${JSON.stringify(newMessages)}`);
+                 })
+                
+              })
+            }
+        }
+
     }break; //end of case DELETE
 
     default:
